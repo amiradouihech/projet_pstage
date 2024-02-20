@@ -1,0 +1,26 @@
+.custom-list {
+    list-style-type: square;
+    padding: 30px;
+  }
+  
+  .custom-list li {
+    border-radius: 10px;
+    margin: 10px 0;
+    size: 80px;
+  }
+  
+  .custom-list a {
+    color: blue;
+    text-decoration: none;
+  }
+  
+  .custom-list a:hover {
+    text-decoration: underline;
+  }
+  .ab{
+    border: 10px solid rgb(4, 4, 255) ;
+    text-justify: auto;
+    text-align: center;
+    text-size-adjust: 80px;
+  }
+   
