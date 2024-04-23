@@ -1,9 +1,12 @@
 
+
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,6 +20,92 @@ const connection = mysql.createConnection({
 });
 
 connection.connect();
+
+
+function generateToken(userId) {
+  return jwt.sign({ userId }, 'votre_secret_key', { expiresIn: '1h' }); }
+
+// Route de création de compte avec génération de token JWT
+app.post('/signup', async (req, res) => {
+  const { name, email, password } = req.body;
+  
+  try {
+    // Hachage du mot de passe avec un coût de hachage de 10
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Insérez le mot de passe haché dans la base de données
+    const sql = "INSERT INTO login (name, email, password) VALUES (?, ?, ?)";
+    const values = [name, email, hashedPassword];
+    
+    connection.query(sql, values, (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Erreur lors de la création du compte" });
+      } else {
+        // Si le compte est créé avec succès, générez un token JWT avec l'ID de l'utilisateur
+        const userId = result.insertId; // Utilisez l'ID de l'utilisateur inséré dans la base de données
+        const token = generateToken(userId);
+        
+        // Envoyer le token JWT au client
+        return res.status(200).json({ message: "Compte créé avec succès", token });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erreur lors de la création du compte" });
+  }
+});
+
+async function verifyUser(email, password) {
+  try {
+    const sql = "SELECT * FROM login WHERE email = ?";
+    const [rows] = await query(sql, [email]);
+    
+    if (rows.length === 0) {
+      return null; // Utilisateur non trouvé
+    }
+
+    const user = rows;
+
+    // Vérifier si user.password est défini avant de comparer
+    if (user && user.password) {
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      console.log(passwordMatch);
+      if (passwordMatch) {
+        return user; // Les informations d'identification sont valides
+      } else {
+        return null; // Mot de passe incorrect
+      }
+    } else {
+      return null; // Le mot de passe n'est pas défini pour cet utilisateur
+    }
+  } catch (error) {
+    console.log("test");
+    throw error; // Propager l'erreur vers le gestionnaire de route
+  }
+}
+
+// Route de connexion
+app.post('/connexion', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await verifyUser(email, password);
+    console.log('user :',user);
+    if (user) {
+      // Générer un jeton JWT avec l'ID de l'utilisateur
+      const token = generateToken(user.id); // Utilisez l'ID de l'utilisateur
+      res.status(200).json({ message: "Connexion réussie", token });
+    } else {
+      res.status(401).json({ error: "Identifiants incorrects" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erreur lors de la connexion" });
+  }
+});
+
+// Fonction de requête générique pour gérer les requêtes SQL
 const query = async (sql, params) => {
   return new Promise((resolve, reject) => {
     connection.query(sql, params, (error, results, fields) => {
@@ -28,38 +117,7 @@ const query = async (sql, params) => {
     });
   });
 };
-//login
-app.post('/signup',(req,res)=>{
-  const sql="INSERT INTO login(`name`,`email`,`password`) Values(?)";
-  const values =[
-    req.body.name,
-    req.body.email,
-    req.body.password,
-  ]
-  connection.query(sql,[values],(err,data)=>{
-    if(err) {
-      console.log(err);
-      return res.json(err);}
-    console.log(data);
-    return res.json(data);
-  })
-})
-//connexion
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  // Requête MySQL pour vérifier les informations d'identification
-  db.query('SELECT * FROM login WHERE email = ? AND  password= ?', [email, password], (err, result) => {
-      if (err) {
-          res.status(500).json({ error: "Erreur interne du serveur" });
-      } else {
-          if (result.length > 0) {
-              res.status(200).json({ message: "Connexion réussie" });
-          } else {
-              res.status(401).json({ error: "Identifiants incorrects" });
-          }
-      }
-  });
-});
+
 app.get('/liste_client', async (req, res) => {
   try {
     const results = await query('SELECT * FROM produit');

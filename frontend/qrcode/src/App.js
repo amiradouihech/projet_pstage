@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/navbar'; // Importez votre composant navbar
 import ListeProduits from './components/listeproduit';
 import EditerProduit from './components/editer';
 import AjouterProduit from './components/ajouter';
@@ -15,10 +16,12 @@ import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
 import Tpp from './components/testdropdown';
 import Login from './components/signup';
+
 const App = () => {
   return (
     <div>
       <Router>
+        <Navbar /> {/* Utilisez votre composant navbar */}
         <Routes>
           <Route path="/signup" element={<Login/>}/>
           <Route path="/drop" element={<Tpp />} />
@@ -32,6 +35,7 @@ const App = () => {
           <Route path="/ajouter" element={<AjouterProduit />} />
           <Route path="/listerouge" element={<Listrouge/>}/>
           <Route path="/listebleu" element={<ListeBleu />} />
+          <Route path='/connexion' element={<Connexion/>}/>
           <Route path='/connexion' element={<Connexion/>}/>
         </Routes>
       </Router>
