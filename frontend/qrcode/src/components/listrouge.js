@@ -24,7 +24,7 @@ function Listrouge() {
   return (
     <div style={{}}>
       <div>
-        <h1 style={{ color: 'red' }}>Lister produit on le moi de quantite</h1>
+        <h1 style={{ color: 'red' }}>Lister les produits qui ont la quantité la plus basse</h1>
         <table className="table table-striped">
           <thead className="table-danger">
             <tr>

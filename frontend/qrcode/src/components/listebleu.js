@@ -22,7 +22,7 @@ function ListeBleu() {
   return (
     <div style={{}}>
       <div>
-        <h1 style={{ color: 'blue' }}>Lister produit avec le plus de quantité</h1>
+        <h1 style={{ color: 'black' }}>Lister les produit qui ont les quantités les plus élvées</h1>
         <table className="table table-striped">
           <thead className="table-danger">
             <tr>

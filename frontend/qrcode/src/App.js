@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/navbar'; // Importez votre composant navbar
+import Navbar from './components/navbar';
 import ListeProduits from './components/listeproduit';
 import EditerProduit from './components/editer';
 import AjouterProduit from './components/ajouter';
@@ -21,9 +21,9 @@ const App = () => {
   return (
     <div>
       <Router>
-        <Navbar /> {/* Utilisez votre composant navbar */}
+        <Navbar />
         <Routes>
-          <Route path="/signup" element={<Login/>}/>
+          <Route path="/signup" element={<Login />} />
           <Route path="/drop" element={<Tpp />} />
           <Route path="/liste_produit" element={<ListeProduits />} />
           <Route path="/licat1" element={<Listproduitcata1 />} />
@@ -33,10 +33,10 @@ const App = () => {
           <Route path="/liste_client" element={<Listeclient />} />
           <Route path="/editer/:id/:lib/:des/:qte/:pr" element={<EditerProduit />} />
           <Route path="/ajouter" element={<AjouterProduit />} />
-          <Route path="/listerouge" element={<Listrouge/>}/>
+          <Route path="/listerouge" element={<Listrouge />} />
           <Route path="/listebleu" element={<ListeBleu />} />
-          <Route path='/connexion' element={<Connexion/>}/>
-          <Route path='/connexion' element={<Connexion/>}/>
+          <Route path="/connexion" element={<Connexion />} />
+          <Route path="/connexion" element={<Connexion />} />
         </Routes>
       </Router>
     </div>
